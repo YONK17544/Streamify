@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import bcrypt from "bcryptjs";
+import { upsertStreamUser } from "../lib/stream.js";
 dotenv.config();
 
 
@@ -40,7 +40,18 @@ export async function SignUp(req, res) {
         });
 
         await newUser.save();
+        
         //TODO: CREATE THE USER IN STREAM AS WELL
+        try {
+             await upsertStreamUser({
+            id: newUser._id.toString(),
+            name: newUser.fullName,
+            image: newUser.profilePic,
+        });
+        console.log(`Stream user created for ${newUser.fullName}`);
+        } catch (error) {
+            console.error("Error creating Stream user:", error);
+        }
 
         //token for authentication
         const token = jwt.sign({userId: newUser._id}, process.env.JWT_SECRET_KEY, {expiresIn: '30d'});
@@ -63,10 +74,41 @@ export async function SignUp(req, res) {
 
 export async function LogIn(req, res) {
     // Logic for logging in a user
-    res.send('Login successful!');
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+
+        const user = await User.findOne({email});
+        if(!user) {
+            return res.status(401).json({ message: 'Invalid email or password' });
+        }
+        const isPasswordCorrect = await user.matchPassword(password);
+        if(!isPasswordCorrect) {
+            return res.status(401).json({ message: 'Invalid email or password' });
+        }
+
+          //token for authentication
+        const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET_KEY, {expiresIn: '30d'});
+
+        // Set the JWT token in a cookie
+        res.cookie("jwt", token, {
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+            httpOnly: true,
+            sameSite: 'strict',
+            secure: process.env.NODE_ENV === 'production' // Use secure cookies in production
+        });
+        res.status(200).json({success:true, user});
+
+    } catch (error) {
+        console.log('Error in LogIn:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
 }   
 
 export function LogOut(req, res) {
     // Logic for logging out a user
-    res.send('Logout successful!');
+    res.clearCookie("jwt");
+    res.status(200).json({ message: 'Logged out successfully' });
 }
