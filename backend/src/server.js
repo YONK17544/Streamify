@@ -5,12 +5,20 @@ import userRoutes from './routes/user.routes.js';
 import chatRoutes from './routes/chat.route.js';
 import { connectDB } from './lib/db.js';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 
-dotenv.config();
+dotenv.config(); 
 
 const app = express();
 
 const PORT = process.env.PORT || 5001;
+
+app.use(cors(
+    {
+        origin: "http://localhost:5173", // Replace with your frontend URL
+        credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+    }
+));
 app.use(express.json()); // Middleware to parse JSON bodies
 app.use(cookieParser()); // Middleware to parse cookies
 
