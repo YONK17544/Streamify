@@ -23,7 +23,7 @@ function App() {
   if(isLoading) return <PageLoader/>
 
   return (
-    <div className = "h-screen" data-theme = {theme}>
+    <div className = "h-max" data-theme = {theme}>
       <Routes>
         <Route path = "/" element = { 
           isAuthenticated && isOnboarded ? (
