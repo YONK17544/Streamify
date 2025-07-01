@@ -9,6 +9,7 @@ import ChatPage from "./pages/ChatPage.jsx"
 import { Toaster } from "react-hot-toast";
 import PageLoader from "./components/PageLoader.jsx"
 import useAuthUser from "./hooks/useAuthUser.js"
+import LayOut from "./components/LayOut.jsx"
 
 function App() {
 
@@ -24,12 +25,15 @@ function App() {
       <Routes>
         <Route path = "/" element = { 
           isAuthenticated && isOnboarded ? (
-          <HomePage/>
+          <LayOut showSidebar = {true}>
+            <HomePage/>
+          </LayOut>
         ) : 
         <Navigate to = {!isAuthenticated ? "/login" : "/onboarding"}/>
         }/>
-        <Route path = "/signup" element = { !isAuthenticated ? <SignUpPage/> : <Navigate to = "/"/>}/>
-        <Route path = "/login" element = {isAuthenticated ? <LogInPage/> : <Navigate to = "/"/>}/>
+        <Route path = "/signup" element = { !isAuthenticated ? <SignUpPage/> : <Navigate to = { isOnboarded ? "/" : "/onboarding"}/>}/>
+        <Route path = "/login" element = {!isAuthenticated ? <LogInPage/> : <Navigate
+        to = { isOnboarded ? "/" : "/onboarding"}/>}/>
         <Route path = "/notifications" element = { isAuthenticated ? <NotificationsPage/> : <Navigate to = "/login"/>}/>
         <Route path = "/onboarding" element = 
         { isAuthenticated ? (!isOnboarded ? <OnBoardingPage/> : <Navigate to = "/"/>): <Navigate to = "/login"/>}/>
