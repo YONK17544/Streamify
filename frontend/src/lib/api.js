@@ -63,3 +63,11 @@ export const getStreamToken = async () =>{
       const res = await axiosInstance.get("/chat/token");
       return res.data;
 }
+
+export const getStreamVideoToken = async () => {
+  const res = await axiosInstance.get("/chat/vid-token", {
+    withCredentials: true, // if you're using cookies for auth
+  });
+
+  return res.data; // Match structure expected by useQuery
+};
