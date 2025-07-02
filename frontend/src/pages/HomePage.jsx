@@ -7,6 +7,7 @@ import { CheckCircleIcon, MapPinIcon, UserPlusIcon, UsersIcon } from 'lucide-rea
 import FriendCard, { getLanguageFlag } from '../components/FriendCard.jsx';
 import NoFriendsFound from '../components/NoFriendsFound.jsx';
 import { capitialize } from '../lib/utils.js';
+import { toast } from 'react-hot-toast';
 
 const HomePage = () => {
 
@@ -32,7 +33,25 @@ const HomePage = () => {
     mutationFn: sendFriendRequest, 
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ["outgoingFriendReqs"]});
-    }
+    },
+    onError: (error) => {
+  console.error("Error sending friend request:", error);
+
+  // Safely extract the backend's error message
+  const message = error?.response?.data?.message;
+
+  if (message === "Friend request already exists between you and this user") {
+    toast.error("A friend request already exists between you and this user.");
+  } else if (message === "You are already friends with this user") {
+    toast.error("You are already friends.");
+  } else if (message === "You cannot send a friend request to yourself") {
+    toast.error("Cannot send a friend request to yourself.");
+  } else if (message) {
+    toast.error(message);
+  } else {
+    toast.error("Something went wrong. Please try again.");
+  }
+}
   })
 
   useEffect(() =>{
