@@ -22,11 +22,11 @@ const Navbar = () => {
     })
 
   return (
-    <nav  className="bg-base-200 border-b border-base-300 sticky top-0 z-30 h-16 flex items-center">
+    <nav className="bg-base-200 border-b border-base-300 sticky top-0 z-30 h-16 flex items-center">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-end w-full">
-            {/* LOGO ONLY IF WE ARE IN THE CHAT PAGE */}
-             {isChatPage && (
+          {/* LOGO - ONLY IN THE CHAT PAGE */}
+          {isChatPage && (
             <div className="pl-5">
               <Link to="/" className="flex items-center gap-2.5">
                 <ShipWheelIcon className="size-9 text-primary" />
@@ -37,7 +37,7 @@ const Navbar = () => {
             </div>
           )}
 
-          <div className = "flex items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-3 sm:gap-4 ml-auto">
             <Link to={"/notifications"}>
               <button className="btn btn-ghost btn-circle">
                 <BellIcon className="h-6 w-6 text-base-content opacity-70" />
@@ -45,7 +45,8 @@ const Navbar = () => {
             </Link>
           </div>
 
-          <ThemeSelector/>
+          {/* TODO */}
+          <ThemeSelector />
 
           <div className="avatar">
             <div className="w-9 rounded-full">
@@ -53,7 +54,7 @@ const Navbar = () => {
             </div>
           </div>
 
-           {/* Logout button */}
+          {/* Logout button */}
           <button className="btn btn-ghost btn-circle" onClick={logoutMutation}>
             <LogOutIcon className="h-6 w-6 text-base-content opacity-70" />
           </button>

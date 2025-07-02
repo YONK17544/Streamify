@@ -36,11 +36,24 @@ function App() {
         <Route path = "/signup" element = { !isAuthenticated ? <SignUpPage/> : <Navigate to = { isOnboarded ? "/" : "/onboarding"}/>}/>
         <Route path = "/login" element = {!isAuthenticated ? <LogInPage/> : <Navigate
         to = { isOnboarded ? "/" : "/onboarding"}/>}/>
-        <Route path = "/notifications" element = { isAuthenticated ? <NotificationsPage/> : <Navigate to = "/login"/>}/>
+        <Route path = "/notifications" 
+        element = { isAuthenticated && isOnboarded ? (
+          <LayOut showSidebar = {true}>
+            <NotificationsPage/>
+          </LayOut>
+        ):(
+          <Navigate to = {!isAuthenticated ? "/login" : "/onboarding"}/>
+        )}/>
         <Route path = "/onboarding" element = 
         { isAuthenticated ? (!isOnboarded ? <OnBoardingPage/> : <Navigate to = "/"/>): <Navigate to = "/login"/>}/>
         <Route path = "/call" element = { isAuthenticated ? <CallPage/>:<Navigate to = "/login"/>}/>
-        <Route path = "/chat" element = { isAuthenticated ?<ChatPage/> : <Navigate to = "/login"/>}/>
+        <Route path = "/chat/:id" element = { 
+          isAuthenticated && isOnboarded ? (
+            <LayOut showSidebar = {false}><ChatPage/></LayOut>
+          ):(
+            <Navigate to = {!isAuthenticated ? "/login" : "/onboarding"}/>
+          )
+          }/>
         {/* Add more routes as needed */}
       </Routes>
 
